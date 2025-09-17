@@ -1,44 +1,20 @@
 import { useState } from "react";
-import NotesList from "../components/NotesList";
-import AddNotes from "../components/AddNotes";
-import { getInitialData } from "../utils";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import NotesList from "../components/NotesList.jsx";
+import { deleteNote, selectActiveNotes } from '../store/notesSlice.js';
 
 function NotesApp() {
-  const [notes, setNotes] = useState(getInitialData());
-  const [formData, setFormData] = useState({ title: "", description: "" });
+  const dispatch = useDispatch();
+  const notes = useSelector(selectActiveNotes);
   const [search, setSearch] = useState("");
 
   const DeleteNotes = (id) => {
-    const newNotes = notes.filter((note) => note.id !== id);
-    setNotes(newNotes);
+    dispatch(deleteNote(id));
   };
 
   const searchChange = (e) => {
     setSearch(e.target.value);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.title && formData.description) {
-      const newNotes = {
-        id: Date.now(),
-        title: formData.title,
-        body: formData.description,
-        createdAt: new Date().toISOString(),
-        archived: false,
-      };
-
-      setNotes([...notes, newNotes]);
-      setFormData({ title: "", description: "" });
-    }
   };
 
   const filteredNotes = notes.filter(note =>
@@ -69,9 +45,9 @@ function NotesApp() {
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative max-w-md mx-auto">
+        {/* Search Bar & Add Button */}
+        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative max-w-md flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -85,15 +61,27 @@ function NotesApp() {
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 outline-none bg-white shadow-md"
             />
           </div>
+          
+          <Link 
+            to="/notes/new"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl flex items-center"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Tambah Catatan
+          </Link>
         </div>
-
-        {/* Add Notes Form */}
-        <AddNotes
-          title={formData.title}
-          description={formData.description}
-          onChange={handleInputChange}
-          onSubmit={handleSubmit}
-        />
 
         {/* Notes List */}
         <div className="mb-6">
@@ -111,4 +99,3 @@ function NotesApp() {
 }
 
 export default NotesApp;
-

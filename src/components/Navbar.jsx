@@ -10,6 +10,9 @@ const Navbar = () => {
       <Link to="/detail/:id">
         <li>Detail Catatan</li>
       </Link>
+      <Link to="/notes/new">
+        <li>Add Notes</li>
+      </Link>
     </div>
   );
 };
