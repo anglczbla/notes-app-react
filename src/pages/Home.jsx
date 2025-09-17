@@ -2,22 +2,28 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import NotesList from "../components/NotesList.jsx";
-import { deleteNote, selectActiveNotes } from '../store/notesSlice.js';
+import { deleteNote, selectActiveNotes, selectArchivedNotes } from '../store/notesSlice.js';
 
 function NotesApp() {
   const dispatch = useDispatch();
-  const notes = useSelector(selectActiveNotes);
+  const activeNotes = useSelector(selectActiveNotes);
+  const archivedNotes = useSelector(selectArchivedNotes);
   const [search, setSearch] = useState("");
+  const [currentTab, setCurrentTab] = useState("active"); // "active" or "archived"
 
   const DeleteNotes = (id) => {
-    dispatch(deleteNote(id));
+    if (window.confirm('Apakah Anda yakin ingin menghapus catatan ini?')) {
+      dispatch(deleteNote(id));
+    }
   };
 
   const searchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const filteredNotes = notes.filter(note =>
+  const currentNotes = currentTab === "active" ? activeNotes : archivedNotes;
+  
+  const filteredNotes = currentNotes.filter(note =>
     note.title.toLowerCase().includes(search.toLowerCase()) ||
     note.body.toLowerCase().includes(search.toLowerCase())
   );
@@ -44,10 +50,10 @@ function NotesApp() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Search Bar & Add Button */}
-        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative max-w-md flex-1">
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="relative max-w-md w-full sm:flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -64,7 +70,7 @@ function NotesApp() {
           
           <Link 
             to="/notes/new"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl flex items-center"
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -83,15 +89,76 @@ function NotesApp() {
           </Link>
         </div>
 
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setCurrentTab("active")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                  currentTab === "active"
+                    ? "border-purple-500 text-purple-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Catatan Aktif ({activeNotes.length})
+                </span>
+              </button>
+              <button
+                onClick={() => setCurrentTab("archived")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                  currentTab === "archived"
+                    ? "border-purple-500 text-purple-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8l6 6 6-6 2-2H3l2 2z" />
+                  </svg>
+                  Arsip ({archivedNotes.length})
+                </span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
         {/* Notes List */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-            <svg className="w-6 h-6 text-purple-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            Catatan Anda ({filteredNotes.length})
-          </h2>
-          <NotesList notes={filteredNotes} onDelete={DeleteNotes} />
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+              <svg className="w-6 h-6 text-purple-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {currentTab === "active" ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8l6 6 6-6 2-2H3l2 2z" />
+                )}
+              </svg>
+              {currentTab === "active" ? "Catatan Aktif" : "Arsip Catatan"}
+              {search && ` (${filteredNotes.length} dari ${currentNotes.length})`}
+            </h2>
+            
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Hapus pencarian
+              </button>
+            )}
+          </div>
+          <NotesList 
+            notes={filteredNotes} 
+            onDelete={DeleteNotes} 
+            showArchived={currentTab === "archived"} 
+          />
         </div>
       </div>
     </div>
