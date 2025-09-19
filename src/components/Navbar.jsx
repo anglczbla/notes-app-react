@@ -34,7 +34,7 @@ const Navbar = () => {
               Home
             </Link>
             
-            <Link 
+            {/* <Link 
               to="/notes/new"
               className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                 location.pathname === '/notes/new' 
@@ -46,7 +46,7 @@ const Navbar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               Add Notes
-            </Link>
+            </Link> */}
           </nav>
         </div>
       </div>
