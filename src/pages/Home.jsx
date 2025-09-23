@@ -11,7 +11,7 @@ import {
   selectNotesError,
 } from "../store/notesSlice.js";
 
-function NotesApp({ user, updateUser }) {
+function NotesApp({ user }) {
   const dispatch = useDispatch();
   const activeNotes = useSelector(selectActiveNotes);
   const archivedNotes = useSelector(selectArchivedNotes);
@@ -22,11 +22,7 @@ function NotesApp({ user, updateUser }) {
 
   useEffect(() => {
     dispatch(fetchNotes());
-    // update user jika belum ada nama
-    if (!user?.name && updateUser) {
-      updateUser();
-    }
-  }, [dispatch, user, updateUser]);
+  }, [dispatch]);
 
   const handleDeleteNote = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus catatan ini?")) {
