@@ -1,13 +1,23 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { archiveNote } from '../store/notesSlice.js';
+import { archiveNoteAsync, unarchiveNoteAsync, fetchNotes} from '../store/notesSlice.js';
 
 function NotesList({ notes, onDelete, showArchived = false }) {
   const dispatch = useDispatch();
 
-  const handleArchive = (id) => {
-    dispatch(archiveNote(id));
+  const handleArchive = async (id, isArchived) => {
+    try {
+      if (isArchived) {
+        await dispatch(unarchiveNoteAsync(id)).unwrap();
+      } else {
+        await dispatch(archiveNoteAsync(id)).unwrap();
+      }
+      // Refresh notes after archive/unarchive
+      dispatch(fetchNotes());
+    } catch (error) {
+      console.error('Failed to archive/unarchive note:', error);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -62,7 +72,7 @@ function NotesList({ notes, onDelete, showArchived = false }) {
               </h3>
               <div className="flex items-center space-x-2 ml-2">
                 <button
-                  onClick={() => handleArchive(note.id)}
+                  onClick={() => handleArchive(note.id, note.archived)}
                   className={`p-1.5 rounded-lg transition-colors duration-200 ${
                     note.archived 
                       ? 'text-green-600 hover:bg-green-50' 

@@ -1,23 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import NotesList from "../components/NotesList.jsx";
 import {
-  deleteNote,
+  fetchNotes,
+  deleteNoteAsync,
   selectActiveNotes,
   selectArchivedNotes,
+  selectNotesLoading,
+  selectNotesError,
 } from "../store/notesSlice.js";
 
-function NotesApp() {
+function NotesApp({ user, updateUser }) {
   const dispatch = useDispatch();
   const activeNotes = useSelector(selectActiveNotes);
   const archivedNotes = useSelector(selectArchivedNotes);
+  const loading = useSelector(selectNotesLoading);
+  const error = useSelector(selectNotesError);
   const [search, setSearch] = useState("");
-  const [currentTab, setCurrentTab] = useState("active"); // "active" or "archived"
+  const [currentTab, setCurrentTab] = useState("active");
 
-  const DeleteNotes = (id) => {
+  useEffect(() => {
+    dispatch(fetchNotes());
+    // update user jika belum ada nama
+    if (!user?.name && updateUser) {
+      updateUser();
+    }
+  }, [dispatch, user, updateUser]);
+
+  const handleDeleteNote = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus catatan ini?")) {
-      dispatch(deleteNote(id));
+      try {
+        await dispatch(deleteNoteAsync(id)).unwrap();
+        // Refresh notes after deletion
+        dispatch(fetchNotes());
+      } catch (error) {
+        console.error("Failed to delete note:", error);
+      }
     }
   };
 
@@ -32,6 +51,48 @@ function NotesApp() {
       note.title.toLowerCase().includes(search.toLowerCase()) ||
       note.body.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Memuat catatan...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-12 h-12 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p className="text-red-600 mb-4">Error: {error}</p>
+          <button
+            onClick={() => dispatch(fetchNotes())}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100">
@@ -62,7 +123,8 @@ function NotesApp() {
               </span>
             </h1>
             <p className="text-gray-600">
-              Kelola catatan Anda dengan mudah dan efisien
+              Selamat datang, {user?.name}! Kelola catatan Anda dengan mudah dan
+              efisien
             </p>
           </div>
         </div>
@@ -231,7 +293,7 @@ function NotesApp() {
           </div>
           <NotesList
             notes={filteredNotes}
-            onDelete={DeleteNotes}
+            onDelete={handleDeleteNote}
             showArchived={currentTab === "archived"}
           />
         </div>
