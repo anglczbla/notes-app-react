@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import NotesList from "../components/NotesList.jsx";
 import {
@@ -14,13 +14,16 @@ import { selectIsDarkMode } from "../store/themeSlice.js";
 
 function NotesApp({ user }) {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const isDarkMode = useSelector(selectIsDarkMode);
   const activeNotes = useSelector(selectActiveNotes);
   const archivedNotes = useSelector(selectArchivedNotes);
   const loading = useSelector(selectNotesLoading);
   const error = useSelector(selectNotesError);
-  const [search, setSearch] = useState("");
-  const [currentTab, setCurrentTab] = useState("active");
+  
+  // get search and tab from URL parameters
+  const search = searchParams.get("search") || "";
+  const currentTab = searchParams.get("tab") || "active";
 
   useEffect(() => {
     dispatch(fetchNotes());
@@ -39,7 +42,28 @@ function NotesApp({ user }) {
   };
 
   const searchChange = (e) => {
-    setSearch(e.target.value);
+    const newSearch = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+    
+    if (newSearch) {
+      newParams.set("search", newSearch);
+    } else {
+      newParams.delete("search");
+    }
+    
+    setSearchParams(newParams);
+  };
+
+  const setCurrentTab = (tab) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("tab", tab);
+    setSearchParams(newParams);
+  };
+
+  const clearSearch = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("search");
+    setSearchParams(newParams);
   };
 
   const currentNotes = currentTab === "active" ? activeNotes : archivedNotes;
@@ -269,7 +293,7 @@ function NotesApp({ user }) {
 
             {search && (
               <button
-                onClick={() => setSearch("")}
+                onClick={clearSearch}
                 className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center transition-colors duration-200"
               >
                 <svg
