@@ -10,9 +10,11 @@ import {
   selectNotesLoading,
   selectNotesError,
 } from "../store/notesSlice.js";
+import { selectIsDarkMode } from "../store/themeSlice.js";
 
 function NotesApp({ user }) {
   const dispatch = useDispatch();
+  const isDarkMode = useSelector(selectIsDarkMode);
   const activeNotes = useSelector(selectActiveNotes);
   const archivedNotes = useSelector(selectArchivedNotes);
   const loading = useSelector(selectNotesLoading);
@@ -50,10 +52,10 @@ function NotesApp({ user }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Memuat catatan...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 dark:border-purple-400 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">Memuat catatan...</p>
         </div>
       </div>
     );
@@ -61,9 +63,9 @@ function NotesApp({ user }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="text-red-500 mb-4">
+          <div className="text-red-500 dark:text-red-400 mb-4">
             <svg
               className="w-12 h-12 mx-auto mb-4"
               fill="none"
@@ -78,10 +80,10 @@ function NotesApp({ user }) {
               />
             </svg>
           </div>
-          <p className="text-red-600 mb-4">Error: {error}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4 transition-colors duration-200">Error: {error}</p>
           <button
             onClick={() => dispatch(fetchNotes())}
-            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600"
+            className="bg-purple-500 dark:bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-200"
           >
             Coba Lagi
           </button>
@@ -91,9 +93,9 @@ function NotesApp({ user }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white shadow-lg">
+      <div className="bg-white dark:bg-gray-800 shadow-lg transition-colors duration-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="text-center">
             <div className="flex justify-center items-center space-x-4 mb-4">
@@ -118,7 +120,7 @@ function NotesApp({ user }) {
                 My Notes App
               </span>
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
               Selamat datang, {user?.name}! Kelola catatan Anda dengan mudah dan
               efisien
             </p>
@@ -133,7 +135,7 @@ function NotesApp({ user }) {
           <div className="relative max-w-md w-full sm:flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
-                className="h-5 w-5 text-gray-400"
+                className="h-5 w-5 text-gray-400 dark:text-gray-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -151,13 +153,13 @@ function NotesApp({ user }) {
               placeholder="Cari catatan..."
               value={search}
               onChange={searchChange}
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 outline-none bg-white shadow-md"
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900/30 focus:border-purple-500 dark:focus:border-purple-400 transition-all duration-200 outline-none shadow-md"
             />
           </div>
 
           <Link
             to="/notes/new"
-            className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center"
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-600 dark:to-pink-600 text-white py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -178,14 +180,14 @@ function NotesApp({ user }) {
 
         {/* Tabs */}
         <div className="mb-6">
-          <div className="border-b border-gray-200">
+          <div className="border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
             <nav className="-mb-px flex space-x-8">
               <button
                 onClick={() => setCurrentTab("active")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                   currentTab === "active"
-                    ? "border-purple-500 text-purple-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "border-purple-500 dark:border-purple-400 text-purple-600 dark:text-purple-400"
+                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <span className="flex items-center">
@@ -209,8 +211,8 @@ function NotesApp({ user }) {
                 onClick={() => setCurrentTab("archived")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                   currentTab === "archived"
-                    ? "border-purple-500 text-purple-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "border-purple-500 dark:border-purple-400 text-purple-600 dark:text-purple-400"
+                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <span className="flex items-center">
@@ -237,9 +239,9 @@ function NotesApp({ user }) {
         {/* Notes List */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center transition-colors duration-200">
               <svg
-                className="w-6 h-6 text-purple-500 mr-3"
+                className="w-6 h-6 text-purple-500 dark:text-purple-400 mr-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -268,7 +270,7 @@ function NotesApp({ user }) {
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center transition-colors duration-200"
               >
                 <svg
                   className="w-4 h-4 mr-1"
