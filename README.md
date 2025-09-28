@@ -78,8 +78,4 @@ Make sure you have the following installed:
    Navigate to `http://localhost:5173` to view the application
 
 
-## Happy Note Taking! 📝✨
-
----
-
 **Happy Note Taking! 📝✨**
