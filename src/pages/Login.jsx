@@ -44,7 +44,7 @@ const Login = ({ onAuthSuccess }) => {
         return false;
       }
 
-      if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
         setError('Password dan konfirmasi password tidak sama');
         return false;
       }
