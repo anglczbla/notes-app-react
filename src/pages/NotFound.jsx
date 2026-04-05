@@ -5,7 +5,6 @@ const NotFound = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 transition-colors duration-300">
       <div className="text-center max-w-md mx-4">
-        {/* 404 Icon */}
         <div className="mb-8">
           <div className="relative">
             <div className="mx-auto w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-lg transition-colors duration-200">
@@ -23,13 +22,11 @@ const NotFound = () => {
                 />
               </svg>
             </div>
-            {/* Floating elements for visual appeal */}
             <div className="absolute -top-2 -right-2 w-8 h-8 bg-pink-200 dark:bg-pink-800/50 rounded-full opacity-60 animate-bounce transition-colors duration-200"></div>
             <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-purple-200 dark:bg-purple-800/50 rounded-full opacity-60 animate-pulse transition-colors duration-200"></div>
           </div>
         </div>
 
-        {/* 404 Text */}
         <h1 className="text-8xl font-bold mb-4">
           <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             404
@@ -44,7 +41,6 @@ const NotFound = () => {
           Maaf, halaman yang Anda cari tidak dapat ditemukan. Mungkin halaman telah dipindahkan atau dihapus.
         </p>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/"
@@ -67,7 +63,6 @@ const NotFound = () => {
           </button>
         </div>
 
-        {/* Additional Info */}
         <div className="mt-12 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2 transition-colors duration-200">
             Saran untuk Anda:

@@ -1,6 +1,5 @@
-const API_BASE_URL = 'https://notes-api.dicoding.dev/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Auth Functions
 const register = async (name, email, password) => {
   const response = await fetch(`${API_BASE_URL}/register`, {
     method: 'POST',
@@ -34,7 +33,6 @@ const login = async (email, password) => {
     throw new Error(data.message || 'Login failed');
   }
   
-  // Store access token in localStorage
   if (data.data && data.data.accessToken) {
     localStorage.setItem('accessToken', data.data.accessToken);
   }
@@ -65,7 +63,6 @@ const getLoggedUser = async () => {
   return data;
 };
 
-// Notes Functions
 const createNote = async (title, body) => {
   const token = localStorage.getItem('accessToken');
   
@@ -199,7 +196,6 @@ const unarchiveNote = async (noteId) => {
   
   const data = await response.json();
   
-  
   if (!response.ok) {
     throw new Error(data.message || 'Failed to unarchive note');
   }
@@ -230,7 +226,6 @@ const deleteNote = async (noteId) => {
   return data;
 };
 
-// Utility function to format date
 const showFormattedDate = (date) => {
   const options = {
     weekday: "long",
@@ -241,37 +236,29 @@ const showFormattedDate = (date) => {
   return new Date(date).toLocaleDateString("id-ID", options);
 };
 
-// Utility function to check if user is authenticated
 const isAuthenticated = () => {
   return localStorage.getItem('accessToken') !== null;
 };
 
-// Utility function to logout
 const logout = () => {
   localStorage.removeItem('accessToken');
 };
 
-// Replace getInitialData with API calls
 const getInitialData = async () => {
   try {
     const response = await getNotes();
     return response.data || [];
   } catch (error) {
-    console.error('Failed to load initial data:', error);
     return [];
   }
 };
 
-// Export all functions
 export {
-  // Auth functions
   register,
   login,
   logout,
   getLoggedUser,
   isAuthenticated,
-  
-  // Notes functions
   createNote,
   getNotes,
   getArchivedNotes,
@@ -279,8 +266,6 @@ export {
   archiveNote,
   unarchiveNote,
   deleteNote,
-  
-  // Utility functions
   showFormattedDate,
   getInitialData,
 };

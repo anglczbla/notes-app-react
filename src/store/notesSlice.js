@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createSelector } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import {
   getNotes,
   getArchivedNotes,
@@ -66,7 +65,6 @@ const notesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch notes
       .addCase(fetchNotes.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -79,21 +77,18 @@ const notesSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      // Add note
       .addCase(addNoteAsync.fulfilled, (state, action) => {
         state.notes.push(action.payload);
       })
       .addCase(addNoteAsync.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      // Delete note
       .addCase(deleteNoteAsync.fulfilled, (state, action) => {
         state.notes = state.notes.filter((note) => note.id !== action.payload);
       })
       .addCase(deleteNoteAsync.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      // Archive note
       .addCase(archiveNoteAsync.fulfilled, (state, action) => {
         const note = state.notes.find((note) => note.id === action.payload);
         if (note) {
@@ -103,7 +98,6 @@ const notesSlice = createSlice({
       .addCase(archiveNoteAsync.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      // Unarchive note
       .addCase(unarchiveNoteAsync.fulfilled, (state, action) => {
         const note = state.notes.find((note) => note.id === action.payload);
         if (note) {
@@ -118,7 +112,6 @@ const notesSlice = createSlice({
 
 export const { clearError } = notesSlice.actions;
 
-// Selectors
 export const selectAllNotes = (state) => state.notes.notes || [];
 export const selectNotesLoading = (state) => state.notes.loading;
 export const selectNotesError = (state) => state.notes.error;
